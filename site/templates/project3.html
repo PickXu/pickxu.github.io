@@ -1,0 +1,192 @@
+{% extends "base.html" %} {% block title %} - Project 3 - Secure Channel{%
+endblock %} {% block content %}
+<div class="container">
+
+	<h1>Project 3 - Secure Channel</h1>
+ {% for pr in course.work %}
+   {% if pr.style == "project" and pr.name == "Project 3" %}
+	<h3>Due {{ pr.due.long() }} at {{ pr.due.time() }}</h3>
+   {% endif %}
+ {% endfor %}
+
+	<p>In this assignment, you'll add functionality to the code you
+		wrote for Projects 1 and 2 to reach the goal of implementing a secure
+		facility for client-server communication across the Internet.</p>
+
+	<p>As before, we will give you some of the code you need, and we'll
+		ask you to provide certain functions missing from the code we provide
+		via Phoenixforge. As before, you must not use any crypto libraries;
+		the only primitives you may use are the ones we gave you and ones you
+		implemented from scratch yourself.</p>
+
+	<p>
+		In this assignment, you will implement a secure channel abstraction
+		that can be used by two programs, a client and a server, to
+		communicate across the network, with the confidentiality and integrity
+		of messages guaranteed. We have given you a class
+		<code>InsecureChannel</code>
+		which implements a channel that works but is not secure: everything is
+		sent in unprotected cleartext. We have also given you stubbed-out code
+		for a class
+		<code>SecureChannel</code>
+		that extends
+		<code>InsecureChannel</code>
+		and (once you have modified it) will protect security and
+		confidentiality.
+	</p>
+
+	<p>
+		<b>IMPORTANT</b>: For this assignment, we will also <b>REQUIRE</b> a
+		README file. In the file, you should describe your setup and your
+		threat model: What are you doing? How would a user of the classes
+		you've written use them? And what security properties (against what
+		sort of adversary) should they expect to get if they use 
+        them correctly? You should write these items in addition to any 
+        documentation you would normally put in comments or a README. 
+        Your README should be short &mdash; a few paragraphs at most.
+	</p>
+
+
+	<p><b>SecureChannel.</b> Your SecureChannel class should implement the following API:
+<pre>
+public class SecureChannel extends InsecureChannel {
+    public SecureChannel(InputStream inStr, OutputStream outStr, 
+			 PRGen rand, boolean iAmServer,
+             RSAKey serverKey) throws IOException 
+    public void sendMessage(byte[] message) throws IOException
+    public byte[] receiveMessage() throws IOException
+}
+</pre>
+
+	<p>
+		The constructor will contain the vast majority of your code. Its role
+		is to set up the secure channel such that the
+		<code>sendMessage</code>
+		and
+		<code>receiveMessage</code>
+		methods can do their jobs. These methods should provide authenticated
+		encryption for the messages that pass over the channel, ensuring that
+		messages arrive at the receiving end in the same order that they were
+		sent on the sending end. Furthermore, when the client is setting up
+		its channel, it should also authenticate the server's identity, and
+		should take whatever steps are necessary to detect any
+		man-in-the-middle. If one of the two parties (server or client)
+		detects a potential security problem during channel construction, that
+		party should close the channel by calling
+		<code>close</code>.
+	</p>
+
+	<p>
+		The underlying <code>InsecureChannel</code> will normally deliver messages in the
+		same order they were sent. But note that an adversary might try to
+		reorder messages.
+		<code>receiveMessage</code>
+		should return <code>null</code> if an invalid or out-of-order message shows up.
+	</p>
+
+
+	<p>
+		<b>Compiling and running.</b> This assignment makes use of the classes you
+		implemented in Projects 1 and 2. To avoid doubly penalizing you for any
+		mistakes you may have made in the previous assignments, we are
+		providing you with a compiled reference implementation of Projects 1 and 2 in
+		<code>project1.jar</code> and <code>project2.jar</code>. This assignment also
+		makes use of Java assertions. To ensure that you use the appropriate JAR files
+		and enable assertions, please compile the code with the following command on Linux and Mac:
+		<pre>javac -cp project1.jar:project2.jar:. [.java files]</pre>
+		and this one on Windows (note the semicolons instead of the colons):
+		<pre>javac -cp "project1.jar;project2.jar;." [.java files]</pre>
+		and run it with this on Linux and Mac:
+		<pre>java -ea -cp project1.jar:project2.jar:. [main class]</pre>
+		and this on Windows (note the semicolons instead of the colons):
+		<pre>java -ea -cp "project1.jar;project2.jar;." [main class]</pre>
+	</p>
+
+	<p>
+		As before, we will be testing your code with Java 8, and so please use that
+		version when compiling and running your implementation. You can check
+		your Java version by typing
+		<code>javac -version</code>
+		and verifying that the version begins with
+		<code>1.8.0_</code>
+		. (If you only have the
+		<code>java</code>
+		command but not the
+		<code>javac</code>
+		command, you have the Java runtime, but you need to install the Java
+		Development Kit.) You can download the Java Development Kit <a
+			href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a>.
+	</p>
+
+	<p>
+		<b>Support code.</b> We have provided a few classes and methods to facilitate testing:</p>
+		<ul>
+			<li><code>SecureChannelUtils</code> provides a few methods for printing out formatted byte arrays.</li>
+			<li><code>ChannelTest</code> provides a demonstration that <code>InsecureChannel</code> works correctly.</li>
+			<li><code>SecureChannelTest</code> enables you to test whether your <code>SecureChannel</code> is working.
+			It does <b>NOT</b> test the channel's security properties, however.</li>
+			<li><code>InsecureChannel</code> (and therefore its subclass <code>SecureChannel</code>) has two methods that are useful for debugging.
+			Passing <code>true</code> to <code>setDebugMode</code> causes the channel to print the contents of every message sent and received.
+			<code>setNumBytesToEcho</code> changes the number of bytes of each message printed in debug mode. The default is to
+			print all the bytes.</li>
+		</ul>
+
+	<p>
+		<b>Assignment Tips and Tricks.</b>
+	</p>
+	
+	<ul>
+		<li>Start by looking at <code>ChannelTest</code>, which will
+			provide you with a better understanding of how <code>InsecureChannel</code>
+			and <code>SecureChannel</code> are intended to be used. In
+			particular, two instances of <code>InsecureChannel</code> will be
+			created (one for the server-to-client channel and one for the client-to-server 
+			channel), each of which connects up two data streams (one
+			input and one output data stream). Messages are sent through the
+			channel using the <code>sendMessage</code> method, and whenever a
+			message is sent via a channel, it stays there until a corresponding <code>receiveMessage</code>
+			call is made. Luckily for you, you won't need to think about <code>InputStreams</code>
+			or <code>OutputStreams</code> at all. That is all taken care of in <code>InscureChannel</code>
+			and in the main function of the <code>ChannelTests</code>. You also shouldn't have to deal with
+			<code>Runnable</code> classes and <code>Threads</code>.
+		</li>
+		<li>Next, look at <code>SecureChannelTest</code> to get a
+			feeling for how the <code>SecureChannel</code> instantiations differ.
+		</li>
+		<li>From there, you should design a threat model. Carefully
+			consider everything that your adversary is trying to do that you'd
+			like to prevent.</li>
+		<li>Once you feel comfortable with your threat model, consider
+			what tools you have available from the previous projects. Your design
+			should be <b>modular</b>, where specific classes solve specific
+			subtasks. We recommend that you start early, sketch everything out
+			schematically, and try to find ways to compromise the security of
+			your design. Only then should you implement and test.
+		</li>
+		<li>The reference solution is only 74 lines of code because it
+			relies heavily on the tools built in the previous projects.</li>
+		<li>In <code>SecureChannelTest</code>, if a thread calls <code>readMessage</code>
+			and there is no message available, it will wait until a message
+			becomes available.
+		</li>
+		<li>When implementing a class, you can call a method of its superclass using <code>super.methodName</code>.
+		For example, <code>SecureChannel</code> can use <code>InsecureChannel</code>'s version of <code>sendMessage</code>
+		via <code>super.sendMessage</code>.</li>
+		<li>When using <code>PRGen</code>, you can use other methods of its superclass 
+		<a href="https://docs.oracle.com/javase/8/docs/api/java/util/Random.html">java.util.Random</a> because they're
+		actually implemented in terms of <code>next</code>. For example, <code>PRGen.nextBytes</code> might be useful.</li>
+	</ul>
+
+	<p>
+		<b>A few words about grading.</b> As before, some of your grade will be based on
+		whether your code passes certain automated tests. But, as stated
+		previously, the security of your implementation ultimately depends on
+		its design and cannot be verified by testing alone. An implementation
+		that compiles, runs, and appears to work may in fact be insecure. As a
+		result, manual inspection of your design will determine a large part
+		of your grade.</p>
+	<p>
+			<small>Adapted from an assignment copyright 1998&ndash;2014, <a href="https://www.cs.princeton.edu/~felten">Edward W. Felten</a>. Used with permission.</small>
+		</p>
+</div>
+{% endblock %}

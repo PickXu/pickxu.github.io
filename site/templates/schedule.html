@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %} - Course Schedule{% endblock %}
+{% block schedule_class %} class="active"{% endblock %}
+
+ {% block content %}
+<div class="container">
+  <h1>Course Schedule <span class="pull-right text-muted"><small>{{ course.termStr() }}</small></span></h1>
+  <p>This schedule is subject to change.  Please check back frequently.</p>
+  <br>
+
+  <div class="panel panel-default">
+    <table class="table table-bordered">
+      <thead>
+      	<th class="text-center">Week</th>
+        <th class="text-center">Date</th>
+        <th class="text-center">Lecture</th>
+        <th class="text-center">Homework</th>
+        <th class="text-center">Reading (optional for CMSC 23200)</th>
+      </thead>
+ {% for week in course.weeks %}
+	  <tr>
+	  	<td rowspan="{{ week.classes|length }}">
+	  		Week {{ loop.index }}
+	  	</td>
+     {% for class in week.classes %}
+     {% if not loop.first %}
+	  <tr>
+	  {% endif %}
+	  	<td {% if class.star %} class="highlighted" {% endif %}>
+	  		{% if class.date.note_change %}
+	  			<b>
+	  		{% else %}
+	  			<span class="text-muted">
+	  		{% endif %}
+	  			{{ class.date.short() }}
+	  		{% if class.date.special_time %}
+	  			<br>{{ class.date.special_time|safe }}
+	  		{% endif %}
+	  		{% if class.date.note_change %}
+	  			</b>
+	  		{% else %}
+	  			</span>
+	  		{% endif %}
+	  	</td>
+        <td  class="{% if class.holiday %}active text-muted{% endif %} {% if class.star %}highlighted{% endif %}"  width="28%">
+         {% if class.desc or class.name %}
+          <br>
+         {% endif %}
+         {% if class.name %}
+          <b>{{ class.name|safe }}</b><br>
+         {% endif %}
+         {% if class.desc %}
+          {{ class.desc|safe }}
+         {% endif %}
+		</td>
+		<td {% if class.holiday %} class="active text-muted"{% endif %} width="28%">
+		{% if class.style == 'lecture' %}
+         {% for w in course.work %}
+           {% if w.due and w.due.isSameDate(class.date) %}
+            <div style="margin-top:4px" class="text-info">{{ w.name }} due {{ w.due.time() }}</div>
+           {% elif w.available and w.available.isSameDate(class.date) %}
+            <div style="margin-top:4px" class="text-info">{{ w.name }} out</div>
+           {% endif %}
+         {% endfor %}
+		{% endif %}
+        </td>
+       {% if loop.first %}
+        <td rowspan="{{ week.classes|length }}" width="28%">
+			{% for reading in week.readings %}
+          		{{ reading|safe }}
+			{% endfor %}
+		</td>
+		{% endif %}
+	</tr>
+	{% endfor %}
+ {% endfor %}
+    </table>
+  </div>
+  <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h4><b>Final Exam:</b> Friday, March 18, 10:30am&ndash;12:30pm in Ry 251</h4>
+	</div>
+  </div>
+   <div class="panel panel-default">
+   	<div class="panel-body">
+		<a name="closed-access">*</a> <a href="https://en.wikipedia.org/wiki/Academic_journal_publishing_reform">Unfortunately</a>, 
+		this article requires a paid subscription to a journal or digital library.
+		You should be able to access it on campus. Off campus, you will need to use the UChicago Library's 
+		<a href="http://www.lib.uchicago.edu/e/db/connect.html">proxy or VPN services</a>.
+	</div>
+  </div>
+</div>
+ {% endblock %}

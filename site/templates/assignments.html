@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %} - Assignments{% endblock %}
+{% block assignments_class %} class="active"{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Homeworks</h2>
+			<p>There will be five homeworks during the quarter to be done
+				individually that will each count for 6% of your course grade (4% if
+				you are a graduate student taking CMSC 33250). We encourage you to
+				discuss the problems in general terms with other students in the
+				class. However, the answers you turn in must be your own original
+				work. Please document any material discussions you had with others
+				about this assignment (e.g., "Note: I discussed this exercise with
+				Jane Smith""). Solutions should be submitted electronically via
+				Phoenixforge in plain text format.</p>
+			<ol>
+ {% for hw in course.work %}
+   {% if hw.style == "homework" %}
+     {% if hw.url %}
+       {% if hw.due.isPast() %}
+        <li><a style="color:black" href="{{ hw.url }}"><b>{{ hw.name }}</b></a><br>
+        Due {{ hw.due.long() }} at {{ hw.due.time() }}</li>
+       {% else %}
+        <li><a href="{{ hw.url }}"><b>{{ hw.name }}</b></a><br>
+        Due {{ hw.due.long() }} at {{ hw.due.time() }}</li>
+       {% endif %}
+     {% else %}
+        <li><b class="text-muted">{{ hw.name }}</b><br>
+        Available {{ hw.available }}; Due {{ hw.due }} at {{ hw.due.time() }}</li>
+     {% endif %}
+   {% endif %}
+ {% endfor %}
+      </ol>
+    </div>
+    <div class="col-md-4">
+      <h2>Projects</h2>
+			<p>There will be five projects during the quarter that will each
+				count for 9% of your course grade. The first three projects must be
+				done individually, whereas you will work on Projects 4 and 5 in
+				teams of two or three. You must work with the same team members for
+				both projects. For these group assignments, must not collaborate
+				outside your team, and the work you submit must be entirely your
+				team's. Solutions should be submitted electronically via
+				Phoenixforge.</p>
+			<ol>
+ {% for pr in course.work %}
+   {% if pr.style == "project" %}
+     {% if pr.url %}
+       {% if pr.due.isPast() %}
+        <li><a style="color:black"  href="{{ pr.url }}"><b>{{ pr.name }}</b></a><br>
+        Due {{ pr.due.long() }} at {{ pr.due.time() }}</li>
+       {% else %}
+        <li><a href="{{ pr.url }}"><b>{{ pr.name }}</b></a><br>
+        Due {{ pr.due.long() }} at {{ pr.due.time() }}</li>
+       {% endif %}
+     {% else %}
+        <li><b class="text-muted">{{ pr.name }}</b><br>
+        Available {{ pr.available }}; Due {{ pr.due }} at {{ pr.due.time() }}</li>
+     {% endif %}
+   {% endif %}
+ {% endfor %}
+      </ol>
+    </div>
+     <div class="col-md-4">
+     	<h2>Paper Responses</h2>
+			<p><b>Graduate students taking CMSC 33250</b> must also submit a response to the
+			paper that is assigned as reading each week and that is due the
+			following Wednesday. (These readings are optional for undergraduates
+			taking CMSC 23200.) Paper responses will count for a total of 10% of
+			your course grade.</p>
+			
+			<p>Paper response should be <b>short (~400 words)</b> and have the following structure:</p>
+			<ol class="outline">
+			  <li>In the first paragraph:
+			  <ol>
+			    <li>State the problem that the paper tries to solve; and</li>
+			    <li>Summarize the main contributions.</li>
+			  </ol></li>
+			  <li>In one or more additional paragraphs:
+			  <ol>
+			    <li>Evaluate the paper's strengths <i>and</i> weaknesses;</li>
+			    <li>Discuss something you would have done differently if you had written the paper; and</li>
+			    <li>Suggest one or more interesting open problems on related topics.</li>
+			  </ol></li>
+			</ol>
+		</div>
+  </div><!--/.row-->
+  <br>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <p><b>Late Policy:</b> You will have a budget of four late days (24-
+			hour periods) over the course of the quarter that you can use to turn
+			assignments in late without penalty and without needing to ask for an
+			extension. You cannot consume partial late days. Once your late days
+			are used up, extensions will only be granted in extraordinary
+			circumstances.</p>
+
+			<p>To use some of your late days, post a private message on Piazza to
+			the 'late_chips' folder with your name, CNetID, the assignment, and
+			the number of late chips you are requesting. <b>You must request
+			late chips for an assignment before you hand it in.</b></p>
+
+			<p>We recommend that you start on assignments and get
+			your questions answered early. Although the course staff will work
+			hard to respond to questions in a timely fashion, we cannot guarantee
+			that questions asked within a few hours of the due date will be
+			answered in time.</p>
+		</div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <p><b>Collaboration:</b> The University of Chicago is a community
+		of scholars, and students must understand and internalize the ethics
+		of this community. The University has a two-paragraph <a href="https://studentmanual.sites.uchicago.edu/Policies">policy on Academic Honesty and Plagiarism</a>, which you
+		should read and understand. <b>Do not expect to pass this class if you
+		cannot comply this policy.</b></p>
+
+		<p>Student interactions are an important and useful means to master
+		course material. We recommend that you discuss the material in this
+		class with other students. So what is the boundary between
+		acceptable collaboration and academic misconduct? First, while it is
+		acceptable to discuss homework problems in general terms, it is not
+		acceptable to turn in someone else's work as your own. When the time
+		comes to write down your answer, you should write it down yourself
+		from your own understanding (or your team's, if it is a group
+		project). Moreover, you should cite any material discussions or
+		written sources, e.g., "Note: I discussed this exercise with Jane
+		Smith". You may feel there is a slippery slope from sanctioned
+		discussions to cheating, but a basic principle holds: present only
+		your ideas as yours and attribute all others.</p>
+
+
+		<p>The University's policy says less than it should regarding the
+			culpability of those who know of misconduct by others, but do not
+			report it. If one student "helps" another by giving them a copy of
+			their assignment, only to have that other student copy it and turn
+			it in, both students are culpable. If you have any questions about
+			what is or is not proper academic conduct, please ask an instructor.
+			(This description of Academic Honesty is derived from those of
+			Stuart Kurtz and John Reppy).</p>
+		</div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}: Introduction to Computer Security{% endblock %}
+{% block overview_class %} class="active"{% endblock %}
+
+ {% block content %}
+<div class="container">
+  <h1>Introduction to Computer Security <span class="pull-right"><small>{{ course.termStr() }}</small></span></h1>
+  <p>
+		This course introduces the principles and practice of computer
+		security. It aims to teach you how to model threats to computer
+		systems and how to think like an attacker and a defender. It presents
+		standard cryptographic functions and protocols and gives an overview
+		of threats and defenses for software, host systems, networks, and the
+		Web. It also touches on some of the legal, policy, and ethical issues
+		surrounding computer security in areas such as privacy, surveillance,
+		and the disclosure of security vulnerabilities. The goal of this
+		course is to provide a foundation for further study in computer
+		security and to help you better understand how to design, build, and
+		use computer systems more securely. See the
+		<a href="schedule.html">schedule</a> for details.
+	</p>
+  <hr>
+  <h3>Course Staff</h3>
+  <div class="row">
+	<div class="col-lg-3">
+		<h4>Professor</h4>
+		<div class="row">
+			<div class="col-lg-12">
+				<img class="staff-img" src="static/img/ari.jpg"><br>
+				<a href="https://arifeldman.com">Ariel J. Feldman</a><br>
+				<div id="ari-email"></div><br>
+				Office hours:<br>
+				Mon., Wed. 2&ndash;3:30pm<br>
+				or by appointment<br>
+				Ry. 161A
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-9">
+		<h4>TAs</h4>
+		<div class="row">
+			<div class="col-lg-3">
+				<img class="staff-img" src="static/img/minxu.jpg"><br>
+				Min Xu<br>
+				<div id="min-email"></div><br>
+				Office hours:<br>
+				Tue., Thu. 1:30&ndash;3:00pm<br>
+				Ry. 178
+			</div>
+			<div class="col-lg-3">
+				<img class="staff-img" src="static/img/hajiang.jpg"><br>
+				Hao Jiang<br>
+				<div id="hao-email"></div><br>
+				Office hours:<br>
+				Wed., Fri. 12:00&ndash;1:30pm<br>
+				Ry. 257
+			</div>
+			<div class="col-lg-3">
+				<img class="staff-img" src="static/img/michaelht.jpg"><br>
+				Hao (Michael) Tong<br>
+				<div id="michaelht-email"></div><br>
+				Office hours:<br>
+				Tue., Thu. 10:00&ndash;11:30am<br>
+				Ryerson 4th floor<br>
+				(Door and elevator are locked. For access, take stairs and knock on door or email Michael.)
+			</div>
+		</div>
+	</div>
+  </div>
+  <hr>
+  <h3>Course Information</h3>
+  <table class="table">
+    <tr>
+      <td><b>Prerequisites</b></td>
+      <td>CMSC 15400</td>
+    </tr>
+    <tr>
+      <td><b>Lectures</b></td>
+      <td>Mon., Wed., Fri. 10:30&ndash;11:20am, Ry 251</td>
+    </tr>
+    <tr>
+      <td><b>Communication</b></td>
+      <td>
+        We'll use <a href="{{ course.piazzaUrl() }}">Piazza</a> for general discussion and questions about course material.<br>
+        Assignments will be <a href="assignments.html">distributed here</a> and be collected via Phoenixforge (instructions <a href="phoenixforge.html">here</a>).
+      </td>
+    </tr>
+    <tr>
+      <td><b>Reference&nbsp;Books</b></td>
+      <td>
+        No textbook is required, but if you would like additional references, we recommend:<br>
+        <a href="https://www.schneier.com/book-ce.html">Cryptography Engineering</a> by Ferguson, Schneier, and Kohno<br>
+        <a href="https://www.cl.cam.ac.uk/~rja14/book.html">Security Engineering</a> by Ross Anderson<br>
+        <a href="https://www.cs.umd.edu/~jkatz/imc.html">Introduction to Modern Cryptography</a> by Katz and Lindell
+      </td>
+    </tr>
+  </table>
+  <hr>
+  <h3>Grading</h3>
+	The coursework consists of five homeworks, five projects, and a final
+	exam. In addition, students enrolled in CMSC 33250 must submit
+	a weekly paper response based on the readings, which are optional for
+	undergraduates. All assignments must be done individually with the
+	exception of Projects 4 and 5, which will be done in groups. Your
+	course grade will be based on the following components:
+    <table class="table">
+     <thead>
+     	<tr>
+     		<th></th>
+     		<th>Undergraduate (CMSC 23200)</th>
+     		<th>Graduate (CMSC 33250)</th>
+     	</tr>
+     </thead>
+      <tr>
+        <td>Homeworks</td>
+        <td>30%</td>
+        <td>20%</td>
+      </tr>
+      <tr>
+        <td>Projects</td>
+        <td>45%</td>
+        <td>45%</td>
+      </tr>
+      <tr>
+        <td>Paper Responses</td>
+        <td>N/A</td>
+         <td>10%</td>
+      </tr>
+      <tr>
+        <td>Class Participation</td>
+        <td>5%</td>
+        <td>5%</td>
+      </tr>
+      <tr>
+        <td>Final Exam</td>
+        <td>20%</td>
+        <td>20%</td>
+      </tr>
+    </table>
+  <hr>
+  <h3>Credits</h3>
+  This course owes a great deal to introductory computer security courses developed by others:
+  <ul>
+  	<li>The homeworks are adapted from those of <a href="https://jhalderm.com">J. Alex Halderman</a> and are available under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons License</a>.</li>
+  	<li>The projects are adapted from those of <a href="https://www.cs.princeton.edu/~felten">Edward W. Felten</a>.</li>
+  	<li>The lectures are inspired by those of <a href="https://www.cis.upenn.edu/~nadiah/">Nadia Heninger</a>, <a href="https://www.cs.princeton.edu/~felten">Edward W. Felten</a>, and <a href="https://jhalderm.com">J. Alex Halderman</a>.</li>
+  	<li>The Web site is adapted from that of <a href="https://jhalderm.com">J. Alex Halderman</a>.
+  </ul>
+</div>
+ {% endblock %}

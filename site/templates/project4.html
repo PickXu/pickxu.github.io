@@ -1,0 +1,239 @@
+{% extends "base.html" %} {% block title %} - Project 4 - Lottery Security Design{%
+endblock %} {% block content %}
+<div class="container">
+
+	<h1>Project 4 - Lottery Security Design</h1>
+ {% for pr in course.work  %}
+ 	{% if pr.style == "project" and pr.name == "Project 4" %}
+	<h3>Due {{ pr.due.long() }} at {{ pr.due.time() }}</h3>
+ 	{% endif  %}
+ {% endfor %}
+		
+<h3>Introduction</h3>
+
+	<p>Your group has been hired by the agency that runs the state
+		lottery to design a strategy for managing the interaction between the
+		lottery's central office and the "lottery terminals" in stores
+		throughout the state. Your task in this assignment is to write a memo
+		describing your proposed design, and discussing how well your design
+		meets the criteria set out below. You will be graded partly on your
+		design, and partly on your analysis and critique of your own design.</p>
+
+	<p>
+		<b>For this project, you must work in a group of 2&ndash;3 people,
+			and you'll work with this same group on Project 5 as well. Each group
+			must submit its work to a separate Phoenixforge repository for the
+			group. Cross-group collaboration, including discussion of the merits
+			or flaws of different hypothetical designs, is not allowed. Peer
+			discussion of designs will be the purpose of the next assignment. See
+			<a href="#groups">below</a> for details.
+		</b>
+	</p>
+
+	<h3>How the Lottery Works</h3>
+
+	<p>Lottery tickets are sold for $1 each and can be bought from
+		lottery terminals that are placed in convenience stores throughout the
+		state. Each lottery ticket must have at least three things printed on
+		it: the identity of the terminal that printed it, a timestamp (of up
+		to 1 millisecond accuracy) that marks when it was printed, and a
+		"lucky number" which is an integer between 0 and 9,999,999 inclusive.
+		You may add additional information to each ticket.</p>
+
+
+	<p>Lottery tickets go on sale at 8:00 AM every Monday, and can be
+		bought until 11:00 PM on Saturday. Lottery terminals are programmed to
+		refuse to dispense tickets between 11:00 PM Saturday and 8:00 AM
+		Monday.
+		
+	<p>At 11:30 PM every Saturday, a random number generator in the
+		central lottery office generates the "weekly drawing" which is a
+		randomly chosen integer between 0 and 9,999,999 inclusive. On Sunday,
+		anybody who has a ticket that (a) was sold within the last week, and
+		(b) has a lucky number that matches the weekly drawing, can turn in
+		that ticket. The lottery agency has one week to validate the ticket;
+		if it is successfully validated, the person who turned it in gets
+		$5,000,000 in cash. Any number of winning tickets, or none at all,
+		might exist. Each valid winning ticket gets $5,000,000.</p>
+
+	<p>Tickets are dispensed by lottery terminals, which are small
+		hardware devices that the lottery agency leases to the owners of
+		convenience stores throughout the state. The store puts the terminal
+		next to the store's cash register. A customer who wants to buy a
+		lottery ticket enters his or her chosen lucky number by pressing
+		buttons on the terminal, or the customer presses a special button
+		asking the terminal to generate a lucky number randomly. The customer
+		then pays the store clerk $1. Finally, the store clerk presses a
+		button that causes the terminal to dispense the ticket to the
+		customer.</p>
+
+	<p>At the end of the week, each store tells the lottery agency how
+		many tickets the store sold that week. The store gives the lottery
+		ninety cents for each sale that the store reports; the store gets to
+		keep the other ten cents.</p>
+
+
+<h3>Practical Considerations</h3>
+
+	<p>There are 10,000 lottery terminals in the state.</p>
+
+	<p>Tickets are printed on special, identifiable paper that is
+		produced by the lottery agency and is not sold to anybody else, and
+		they use special ink that is hard to erase. But since the cost to
+		create each ticket is necessarily low, it is certainly possible for a
+		determined criminal to forge a ticket or to modify a legitimate
+		ticket. In other words, you can't necessarily tell whether a ticket is
+		forged just by looking at it.</p>
+
+	<p>Lottery terminals are tamper-resistant, but not tamperproof. This means
+	    that it would be difficult and relatively expensive, but not impossible, 
+	    for someone to open up a terminal and modify its contents or steal any 
+	    secrets inside. A criminal might also steal a terminal and hide it or 
+	    might smash a terminal to bits deliberately.</p>
+
+	<p>Each terminal contains a clock which is accurate unless the terminal has 
+	    been tampered with.</p>
+
+	<p>Some store owners are dishonest and may try to "lowball" you by
+		lying about how many tickets they sold and pocketing the extra money.
+		One of your goals is to make it hard for store owners to do this
+		without getting caught.</p>
+
+	<p>Each terminal costs you $50 per week; this includes maintenance plus
+		the amortized cost of buying the terminal.</p>
+
+	<p>You can add a wireless link to any terminal if you want. Each
+		wireless link costs $10 per week to operate. Once installed, you must
+		continue to pay for the wireless link (i.e. you cannot turn it on and
+		off to save money).</p>
+
+	<p>If you want, you can have each terminal create a weekly log of
+		its activities on a thumb drive which normally resides inside 
+        the terminal. This facility costs $1 per terminal
+		per week, and you can assume that it is tamper-resistant. If you do not pay
+		the $1, then the lottery terminal has no storage. You can have a
+		lottery courier drive out to a store and use a special key to open the
+		terminal and get a copy of the log, or you can use the wireless link
+		to transmit the contents of the log. A courier can visit 200 stores
+		per week, and it costs you $2000 per week per courier for salary,
+		benefits, the courier's car, and clerks to do background checks on the
+		couriers. It is ok if the number of couriers varies over time.</p>
+
+	<p>We are open to other minor tweaks to the overall organization of
+		the lottery or the equipment used in ticket sales (e.g. add more
+		information to the printed tickets, hire jackbooted thugs to guard
+		lottery terminal, give additional prizes for 'close' tickets). If you
+		want to do something that seems to break the rules above, then post on
+		Piazza and we'll get back to you with costs for your proposal. Be
+		creative!</p>
+
+	<p>Note to the left brained: These numbers are not meant to act as
+		hard constraints for an optimization problem. There is not a single
+		correct answer.</p>
+
+<h3>Criteria</h3>
+
+	<p>Your design should strive to meet the following three criteria,
+		which are listed in decreasing order of importance:</p>
+	<ol>
+		<li>It should be virtually impossible for anyone to create a
+			bogus "winning" ticket (for example, by forging the ticket rather
+			than buying it from a legitimate terminal, or by buying a legitimate
+			ticket and changing its numbers or its timestamp) and cash in that
+			ticket successfully.</li>
+		<li>It should be difficult for a merchant to sell a ticket
+			without eventually turning over ninety cents for that ticket to the
+			lottery agency. Put yourself in a dishonest storekeeper's shoes and
+			decide if you'd feel sufficiently deterred from attempting extra
+			sales on the side.</li>
+		<li>The cost of your design should be as low as possible. Note
+			that you have enough data to calculate the cost, including the cost
+			of the terminals, and any wireless links, logging hardware, and/or
+			couriers you decide to use.</li>
+	</ol>
+
+	<p>These criteria are naturally in conflict (e.g. a system with no
+		security would have the lowest cost). You should justify how you
+		balanced these criteria in your design.</p>
+		
+<h3>Logistics</h3>
+
+	<p>You should prepare a report describing and justifying your
+		design, and explaining how it satisfies the three criteria. If you
+		cannot satisfy all of the criteria perfectly, it is better to be
+		honest about that fact and discuss the limitations of your solution in
+		a straightforward way. When you need to make trade-offs, please
+		explain these trade-offs in as much detail as possible.</p>
+
+	<p>If you'd like to do something out of the box, or you need any
+		additional information for analyzing your design that is not given in
+		"practical considerations" above, then please post on Piazza.</p>
+
+	<p>
+		Your grade will be based primarily on the robustness and self-analysis
+		of your design, e.g. how it works, why you think it best satisfies the
+		criteria, and if it actually reasonably satisfies the criteria. Unlike
+		the previous projects, there is no code to implicitly serve as a
+		mathematical description of your design, and thus 
+		<b>we will also be grading on clarity and organization.</b>
+	</p>
+
+	<p>Submit your group's solution to your group's repository on
+		Phoenixforge (see <a href="#groups">below</a>) in either PDF or HTML format. If your
+		solution is in PDF format, please name it project4.pdf. If it's in
+		HTML format, please name the main file project4.html and make sure to
+		include all of the necessary images, CSS files, etc. in your
+		submission.</p>
+		
+<a name="groups"><h3>Groups</h3></a>
+	<ol>
+		<li>You must choose a group of 2&ndash;3 people that you will work in
+			on Projects 4 and 5. Solutions turned in by a "group" of one person,
+			or by a group of four or more people, will receive <b>no credit</b>.
+			Feel free to use Piazza to recruit group members. If you have trouble
+			finding a group, please let the course staff know privately on Piazza.
+		</li>
+
+		<li>When you've chosen a group to work with, one of the group members should go to
+		 	<a href="https://work-groups.cs.uchicago.edu/pick_assignment/26900">this site</a> and 
+		 	follow the directions to invite the other members. Each invited member will receive
+		 	an email allowing them to confirm their membership. Once all of the group members
+		 	have joined, a new separate Phoneixforge repository will be created for the group.
+		 	The Subversion repository URL will be displayed at the 
+		 	<a href="https://work-groups.cs.uchicago.edu/pick_assignment/26900">same site</a>. Please contact
+		 	the course staff as soon as possible if you encounter any difficulties. (Note: if you
+		 	try to sign up for a group right after this project is posted, the option for creating
+		 	a group for this course may not be available yet. If that happens, please check back on
+		 	the Work Group site in a few hours.)
+		</li>
+
+		<li>Your group should submit a single solution in your group's
+			repository on Phoenixforge. The solution should be clearly 
+            labeled with the names of the group's members.</li>
+
+		<li>The members of a group will all receive the same grade on an
+			assignment, reflecting the quality of the group's collective solution
+			to the assignment.</li>
+			
+		<li>For each day that a group wishes to submit its assignment late, a
+			late chip will be deducted for all of the group members.</li>
+
+		<li>It is up to you to divide up the work within your group and to
+			make sure that the other members of your group meet their
+			commitments. If a member of your group is consistently irresponsible, please
+			contact the course staff and we'll take appropriate action.</li>
+	</ol>
+
+	<h3>Disclaimer</h3>
+
+	<p>Many people think that state lotteries are a bad idea, for
+		either moral or practical reasons. This assignment is not an
+		endorsement of state lotteries. We chose the lottery application
+		because it poses technical challenges that make a good project.</p>
+		
+	<p>
+			<small>Adapted from an assignment copyright 1998&ndash;2014, <a
+			href="https://www.cs.princeton.edu/~felten">Edward W. Felten</a>. Used with permission.</small>
+		</p>
+</div>
+{% endblock %}

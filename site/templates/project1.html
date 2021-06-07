@@ -1,0 +1,233 @@
+{% extends "base.html" %} {% block title %} &mdash; Project 1 &mdash; Symmetric Crypto{%
+endblock %} {% block content %}
+<div class="container">
+
+	<h1>Project 1 &mdash; Symmetric Crypto</h1>
+ {% for pr in course.work %}
+   {% if pr.style == "project" and pr.name == "Project 1" %}
+	<h3>Due {{ pr.due.long() }} at {{ pr.due.time() }}</h3>
+   {% endif %}
+ {% endfor %}
+		
+
+		<p>
+		This is the first in a series of three short assignments in which you
+		will build code to implement a secure facility for client-server
+		communication across the Internet.</p>
+		<p>
+			We will give you some of the code you need, and we'll ask you to
+			implement certain functions missing from the code we provide via Phoenixforge.
+			We are giving you two fully-implemented code files, on which you
+			should build all of the crypto functionality you need to do this
+			assignment. The file
+			<code>TrueRandomness.java</code>
+			gives you access to truly random bits which have been extracted from
+			the unpredictable state of the local system, but it can only be used once. The file
+			<code>PRF.java</code>
+			gives you access to a pseudorandom function, as described in
+			lecture. These are the only two crypto primitives you are allowed to
+			use&mdash;any other crypto you use must be built (by you) on top of these
+			two files. Specifically, you may <em>not</em> use any other crypto
+			libraries, not even the ones that are part of the standard Java
+			libraries.</p>
+		<p>
+			In this assignment you will implement three facilities by modifying
+			four Java code files. You will modify
+			<code>PRGen.java</code>
+			to implement a pseudo-random generator class. You will modify
+			<code>StreamCipher.java</code>
+			to implement a stream cipher. You will modify
+			<code>AuthEncryptor.java</code>
+			and
+			<code>AuthDecryptor.java</code>
+			to implement a facility for authenticated encryption and decryption.
+			In each case, we have provided you with a code file in which some
+			parts of "stubbed out". You will replace the stubbed out pieces with
+			code that actually works and provides the required security
+			guarantee. We have put a comment saying "IMPLEMENT THIS" everywhere
+			that you have to supply code.</p>
+
+	<p>
+		We will be testing your code with Java 8, and so please use that
+		version when compiling and running your implementation. You can check
+		your Java version by typing <code>javac -version</code> and verifying that the version begins with
+		<code>1.8.0_</code>. (If you only have the <code>java</code> command but not the <code>javac</code>
+		command, you have the Java runtime, but you need to install the Java
+		Development Kit.) You can download the Java Development Kit 
+		<a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a>.
+	</p>
+
+	<p>
+			<b>PRGen.</b> Your <code>PRGen</code> class should extend Java's built-in <code>java.util.Random</code> class and implement the following API:</p>
+		<pre>
+public class PRGen extends Random {
+    public PRGen(byte[] key)      //creates a new PRGen
+    protected int next(int bits)  //generates the next pseudorandom number
+}
+</pre>
+
+		<p>
+			The <code>next</code> method of your <code>PRGen</code> will override the corresponding method in the parent <code>Random</code> class.
+			You do not need to override any other of methods of <code>Random</code>. 
+			<b>(Hint: Nevertheless, your <code>PRGen</code> will inherit all of the other methods of <code>Random</code>, including <code>nextBytes</code>. 
+			You can use them because they are implemented using <code>next</code> which you will have overridden.)</b> 
+			You may <em>not</em> use Java's <code>SecureRandom</code> class.
+		<p>
+			As stated in the <a
+				href="https://docs.oracle.com/javase/8/docs/api/java/util/Random.html#next-int-">Random</a>
+			spec "The general contract of <code>next</code> is that it returns an <code>int</code> value
+			and if the argument
+			<code>bits</code>
+			is between 1 and 32 (inclusive), then that many low-order bits of the
+			returned value will be (approximately) independently chosen bit
+			values, each of which is (approximately) equally likely to be 0 or
+			1." For example, if you call <code>next(4)</code>, it will return an <code>int</code> between 0
+			and 15. If you call <code>next(32)</code>, it will return an <code>int</code> between
+			-2,147,483,648 and 2,147,483,647 (the highest order bit determines
+			the sign).</p>
+		<p>Your <code>PRGen</code> must obey the following three properties:</p>
+		<ul>
+			<li>It must be <b>pseudorandom</b>, meaning that there is no
+				(known) way to distinguish its output from that of a truly random
+				generator, unless you know the key. </ii>
+			<li>It must be <b>deterministic</b>, meaning that if two
+				programs create generators with the same seed, and then the two
+				programs make the same sequence of calls to their generators, they
+				should receive the same return values from all of those calls.
+			</li>
+			<li>It must be <b>backtracking-resistant</b>, meaning that if an
+				adversary is able to observe the full state of the generator at some
+				point in time, that adversary cannot reconstruct any of the output
+				that was produced by previous calls to the generator. Note that the
+				<code>next</code> function in <code>java.util.Random</code> is not backtracking-resistant.
+			</li>
+		</ul>
+		<p>
+			<b>StreamCipher.</b> Your <code>StreamCipher</code> class should implement the
+			following API:</p>
+		<pre>
+public class StreamCipher {
+    public StreamCipher(byte[] key)
+    public void setNonce(byte[] nonce, int offset)
+    public void setNonce(byte[] nonce)
+    public byte cryptByte(byte in)                          //encrypts the next byte
+    public void cryptBytes(byte[] inBuf, int inOffset,      //encrypts next numBytes
+               byte[] outBuf, int outOffset,                //in the inBuf, writing
+               int numBytes)                                //results to the outBuf
+}
+</pre>
+		This class encrypts or decrypts a stream of bytes, using a stream
+		cipher. (Recall that for a stream cipher, encryption and decryption
+		are the same operation.)
+
+		<p>
+			<b>AuthEncryptor.</b> Your <code>AuthEncryptor</code> class should implement the
+			following API:</p>
+		<pre>
+public class AuthEncryptor {
+    public AuthEncryptor(byte[] key)       
+    public byte[] encrypt(byte[] in, byte[] nonce, boolean nonceInMessage)
+}
+</pre>
+		<p>This class is used to perform authenticated encryption on
+			values. Authenticated encryption protects the confidentiality of a
+			value, so that the only way to recover the initial value is to
+			decrypt the value using the same key and nonce that was used to
+			encrypt it. At the same time, authenticated encryption protects the
+			integrity of a value, so that a party decrypting the value using the
+			same key and nonce (that were used to encrypt it) can verify that
+			nobody has tampered with the value since it was encrypted.</p>
+		<p>Code that uses <code>AuthEncryptor</code> will be required to pass in a
+			different nonce for every call to <code>encrypt</code>. The AuthEncryptor class is
+			not required to detect violations of this rule; it is the
+			responsibility of the code that uses <code>AuthEncryptor</code> to avoid re-using
+			a nonce with the same <code>AuthEncryptor</code> instance.</p>
+		<p>If <code>nonceInMessage</code> is <code>true</code>, then the nonce should be included
+			(in plaintext form) in the output of encrypt. If <code>nonceInMessage</code> is
+			<code>false</code>, then the nonce should still be used in calculating the output,
+			but the nonce itself should not be copied into the output.
+			(Presumably the party who will decrypt the message already knows what
+			the nonce will be.)</p>
+		<p>
+			<b>AuthDecryptor.</b> Your <code>AuthDecryptor</code> class should implement the
+			following API:</p>
+		<pre>
+public class AuthDecryptor {
+    public AuthDecryptor(byte[] key)       
+    public byte[] decrypt(byte[] in, byte[] nonce, boolean nonceInMessage)     
+}
+</pre>
+		<p>
+			The value passed as
+			<code>in</code>
+			will normally have been created by calling <code>encrypt</code> with the same
+			nonce in an <code>AuthEncryptor</code> that was initialized with the same key as
+			this <code>AuthDecryptor</code>.</p>
+		<p>
+			If the integrity of the input value cannot be verified (that is, if
+			the input value could not have been created by calling <code>encrypt</code> with
+			the same nonce in an <code>AuthEncryptor</code> that was initialized with the same
+			key as this <code>AuthDecryptor</code>), then this method returns <code>null</code>. Otherwise
+			it returns a newly allocated byte-array containing the plaintext
+			value that was originally passed to
+			<code>encrypt</code>
+			.
+		</p>
+		<p>
+			If <code>nonceInMessage</code> is true, then the nonce will be included in the
+			<code>in</code>
+			array, and the value passed in as
+			<code>nonce</code>
+			should be disregarded. If <code>nonceInMessage</code> is false, then the nonce is
+			not included in the
+			<code>in</code>
+			array, so the value passed in a
+			<code>nonce</code>
+			should be used.</p>
+		<p>
+			<b>Tips for Getting Started.</b> This list may grow in response to
+			Piazza questions.</p>
+		<ul>
+			<li>Make sure you understand what a PRF is, and how you can use
+				the PRF class to deterministically generate pseudorandom values. See
+				<code>PRF.main</code> for examples.
+			</li>
+			<li>You don't have to use every bit generated by your PRF.</li>
+			<li>The spec is deliberately vague regarding how you should
+				accomplish each task. There is a significant design component to
+				each problem.</li>
+			<li>The bulk of the work for this assignment will be in the
+				design, not the implementation. It shouldn't take many additional
+				lines of code to complete the classes. Our reference solutions are
+				62, 64, 95, and 61 lines of code (the whole file, including
+				everything, even comments, whitespace, brackets, etc.) for <code>PRGen</code>,
+				<code>StreamCipher</code>, <code>AuthEncryptor</code>, and <code>AuthDecryptor</code>
+				respectively.
+			</li>
+		</ul>
+		<p>
+			<b>Advice on testing crypto code.</b> As always, it's important to
+			test your code. But you should be aware that crypto code presents
+			different testing issues than other code does. Testing can
+			sanity-check your code, but it can't verify that your code has the
+			desired security properties. For example, if your code is encrypting
+			data for confidentiality, you can test whether the ciphertext is the
+			right size, and you can test whether the ciphertext looks kind of
+			random-ish, and you can test whether different plaintexts yield
+			different ciphertexts. But you can't test whether there is a way for
+			an adversary to recover the plaintext. So by all means test your code
+			&mdash; if you don't, it's almost certain not to work&mdash;but remember
+			that passing the tests is not enough.</p>
+	<p>
+		<b>A few words about grading.</b> Some of your grade will be based on
+		whether your code passes certain automated tests. But, as stated
+		previously, the security of your implementation ultimately depends on
+		its design and cannot be verified by testing alone. An implementation
+		that compiles, runs, and appears to work may in fact be insecure. As a
+		result, manual inspection of your design will determine a large part
+		of your grade.</p>
+	<p>
+			<small>Adapted from an assignment copyright 1998&ndash;2014, <a href="https://www.cs.princeton.edu/~felten">Edward W. Felten</a>. Used with permission.</small>
+		</p>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "base.html" %} {% block title %} - Project 5 - Lottery Security Design Review{%
+endblock %} {% block content %}
+<div class="container">
+
+	<h1>Project 5 - Lottery Security Design Review</h1>
+ {% for pr in course.work  %}
+ 	{% if pr.style == "project" and pr.name == "Project 5" %}
+	<h3>Due {{ pr.due.long() }} at {{ pr.due.time() }}</h3>
+ 	{% endif  %}
+ {% endfor %}
+
+	<h3>Overview</h3>
+
+	<p>
+		The assignment is to do a <a href="#design-reviews">design review</a>
+		of another group's solution to Project 5. We will email you the names
+		of the students in the group that you will review, along with their
+		solution.
+	</p>
+
+	<p>Your report should discuss the merits of the design in the
+		context of the real world. At a minimum, you should include:</p>
+
+	<ul>
+		<li>How well their design prevents creation of bogus winning
+			tickets.</li>
+		<li>How well their design prevents or deters store owners from
+			underreporting tickets.</li>
+		<li>The cost of their design.</li>
+		<li>Any problems that a holder of a winning ticket might
+			encounter as a result of the security features of the design (e.g. if
+			a terminal is destroyed between purchase and redemption, can a
+			winning ticket still be redeemed?).</li>
+		<li>Other practical considerations of their design decisions. For
+			example, if their design requires customers to type in their names,
+			what impact might this have on lottery sales, the safety of the
+			purchaser, the redemption process, etc.? If their design requires a
+			courier to collect a log before a prize can be awarded, how long
+			might a customer have to wait before they can collect their prize?</li>
+		<li>Whether your team agrees that the tradeoffs made in the five
+			areas above are reasonable.</li>
+		<li>Suggestions for improving the design.</li>
+	</ul>
+
+	<p>When discussing potential security flaws (fraudulent prizes or
+		underreported tickets), be as specific as possible. Specify the
+		knowledge or physical access that an adversary might need (e.g. root
+		password for tickets database computers, PRF keys, access to a vault,
+		ability to ensconce the lottery terminal in a Faraday cage). Consider
+		the real world likelihood of such attacks and consider how such
+		attacks might be prevented.</p>
+
+	<p>If a potential attack relies on some underspecified detail in
+		the design, state any assumptions that might be needed for the attack.
+		For example, if your attack involves stealing a PIN from a central
+		database, and the designers did not specify any details of this
+		database, you should state that an unencrypted PIN could be stolen by
+		a database administrator.</p>
+
+	<p>Keep in mind that an adversary might be a courier, a shop owner,
+		the database administrator for the lottery, etc., or any combination
+		of such people.</p>
+
+	<p>If you happen to notice any "strict improvements", make sure to
+		note these. A strict improvement is any change that would improve
+		security, practicality, or cost with no negative impact on the rest of
+		the design. You might also consider how the degree to which the design 
+		relies on the tamper-resistance of the terminals and the consequences 
+		that would result if a terminal were compromised.</p>
+
+	<a name="design-reviews"><h3>
+			Design reviews
+			</h2></a>
+
+
+	<h4>What is a design review?</h4>
+
+	<p>In a design review, a group of "reviewers" evaluates a design
+		and implementation project done by a group of "designers". The
+		reviewers get a copy of all documents produced by the designers, and
+		they get a chance to ask the designers questions in a face-to-face
+		meeting.</p>
+
+	<p>Design reviews are an important part of security practice in the
+		real world. Bringing in a set of "fresh eyes" to look over a project
+		and requiring the designers to go through the exercise of justifying
+		their design can provide invaluable improvement in a design.</p>
+
+	<p>Done properly, design review is not an adversarial process. The
+		designers must approach the review as an opportunity to learn; the
+		reviewers must approach the review with an attitude of respect for the
+		designers and for what they have done right. The key is to take a
+		"bugs are good" attitude &mdash; you know the bugs are there and
+		you're happy to find them so you can eliminate them.</p>
+
+	<h4>Logistics</h4>
+
+	<p>After the reviewers study the designers' design and discuss it
+		among themselves, the reviewers and designers must pick a mutually
+		agreeable time and place for a face-to-face meeting. This meeting
+		should be approximately 30 minutes to one hour long. <b>Please post the
+		meeting time and location as a Piazza private message.</b></p>
+
+	<p>After the meeting, the reviewers must write a report summarizing
+		their conclusions regarding the design. The report should be frank
+		about the design's good and bad points while being written in a tone
+		respectful of the designers' efforts. Where possible, the review
+		should suggest specific ways to improve the design.</p>
+
+	<h4>Grading design reviews</h4>
+
+	<p>We will grade the reports based on how useful they would be to
+		the designers in understanding the results of their work and how to
+		improve their design in the future.</p>
+
+	<p>In order to encourage frankness in the design reviews, we will
+		ensure that the results of design reviews do not influence the grades
+		we give for the original designs. In other words, if assignment N is a
+		design and assignment N+1 is a review of that design, we will make
+		sure that your grade on assignment N is completely determined before
+		we look at what your reviewers wrote in their report for assignment
+		N+1. Because of this rule, you can provide constructive criticism in
+		your design review without worrying that your criticism is undermining
+		anybody's grade.</p>
+
+	<h4>Advice for reviewers</h4>
+
+	<p>You have limited time in the face-to-face meeting, and so try to use
+		it wisely. Review the design in advance so you don't spend meeting
+		time learning things that you could have gotten from the documents.
+		Your team might want to meet briefly before it meets with the
+		designers so that you can help each other other understand the design
+		and to discuss what questions you'll ask in the main meeting. This
+		kind of pre-meeting works well if it's held immediately before the
+		main meeting; then everything will be fresh in the your minds.</p>
+
+	<p>Try to focus your attention on the hard problems and tough
+		design choices that the designers had to make. These are the areas
+		where you are most likely to find both mistakes and clever solutions by
+		the designers.</p>
+
+
+	<h3>Submission</h3>
+
+	<ul>
+		<li>For this assignment, you <b>must</b> work with the same group
+			that you worked with for Project 4. You may not collaborate with
+			anyone outside your group.
+		</li>
+
+		<li>Submit your group's report to the same group repository on
+			Phoenixforge that you used for Project 4 in either PDF or HTML
+			format. If your solution is in PDF format, please name it
+			project5.pdf. If it's in HTML format, please name the main file
+			project5.html and make sure to include all of the necessary images,
+			CSS files, etc. in your submission.</li>
+
+		<li>As before:
+			<ul>
+				<li>Your group should submit a single solution in your group's
+					repository on Phoenixforge. The solution should be clearly labeled
+					with the names of the group's members.</li>
+
+				<li>The members of a group will all receive the same grade on
+					an assignment, reflecting the quality of the group's collective
+					solution to the assignment.</li>
+
+				<li>For each day that a group wishes to submit its assignment
+					late, a late chip will be deducted for all of the group members.</li>
+
+				<li>It is up to you to divide up the work within your group and
+					to make sure that the other members of your group meet their
+					commitments. If a member of your group is consistently
+					irresponsible, please contact the course staff and we'll take
+					appropriate action.</li>
+			</ul>
+		</li>
+	</ul>
+
+	<p>
+			<small>Adapted from an assignment copyright 1998&ndash;2014, <a
+			href="https://www.cs.princeton.edu/~felten">Edward W. Felten</a>. Used with permission.</small>
+		</p>
+</div>
+{% endblock %}

@@ -1,0 +1,398 @@
+{% extends "base.html" %} {% block title %} &mdash; Project 2 &mdash; Public-key Crypto{%
+endblock %} {% block content %}
+<div class="container">
+
+	<h1>Project 2 &mdash; Public-key Crypto</h1>
+ {% for pr in course.work %}
+   {% if pr.style == "project" and pr.name == "Project 2" %}
+	<h3>Due {{ pr.due.long() }} at {{ pr.due.time() }}</h3>
+   {% endif %}
+ {% endfor %}
+
+	<p>In this assignment, you'll build on the functionality you
+		implemented for Project 1 toward the goal of implementing a secure
+		facility for client-server communication across the Internet.</p>
+
+	<p>As before, we will give you some of the code you need, and we'll
+		ask you to provide certain functions missing from the code we provide
+		via Phoenixforge. As before, you must not use any crypto libraries;
+		the only primitives you may use are the ones we gave you and ones you
+		implemented from scratch yourself.</p>
+
+	<p>
+		In this assignment you will implement three facilities by modifying
+		three Java code files. You will modify
+		<code>RSAKeyPair.java</code>
+		to generate an RSA key pair. You will modify
+		<code>RSAKey.java</code>
+		to implement secure RSA encryption and decryption, and to create and
+		verify digital signatures. You will modify
+		<code>KeyExchange.java</code>
+		to implement a secure key exchange. As in the previous assignment, we
+		have provided you with code files in which some parts are "stubbed
+		out." You will replace the stubbed out pieces with code that actually
+		works and provides the required security guarantees. We have put a
+		comment saying
+		<code>"IMPLEMENT THIS"</code>
+		everywhere that you have to supply code.
+	</p>
+
+	<p>
+		<b>RSAKeyPair.</b> Your RSAKeyPair class should implement the
+		following API:</p>
+	
+	<pre>
+public class RSAKeyPair {
+    public RSAKeyPair(PRGen rand, int numBits)    
+    public RSAKey getPublicKey()                  //already implemented
+    public RSAKey getPrivateKey()                 //already implemented
+    public BigInteger[] getPrimes()               
+}
+</pre>
+	<p>
+		For
+		<code>RSAKeyPair</code>,
+		the bulk of the interesting work is performed by the constructor.
+		This constructor should create an RSA key pair using the algorithm
+		discussed in class. The constructor will use the PRGen called
+		<code>rand</code>
+		to get pseudorandom bits.
+		<code>numBits</code>
+		is the size in bits of each of the primes that will be used. The key
+		pair should be stored as a pair of
+		<code>RSAKey</code>
+		objects.</p>
+	
+	<p>
+		<code>getPrimes()</code>
+		is a method we've added in order to help us with the grading process.
+		Typically, you would not explicitly have a method to return these
+		primes. The primes may be returned in either order.
+	
+	<p>
+		<b>RSAKey.</b> Your RSAKey class should implement the following API:
+	</p>
+	
+	<pre>
+public class RSAKey {
+    public RSAKey(BigInteger theExponent, BigInteger theModulus) // already implemented
+    public BigInteger getExponent()                              // already implemented   
+    public BigInteger getModulus()                               // already implemented
+    public byte[] encrypt(byte[] plaintext, PRGen prgen)                        
+    public byte[] decrypt(byte[] ciphertext)
+    public byte[] sign(byte[] message, PRGen prgen) 
+    public boolean verifySignature(byte[] message, byte[] signature) 
+    public int maxPlaintextLength()
+    public byte[] encodeOaep(byte[] input, PRGen prgen)
+    public byte[] decodeOaep(byte[] input)
+    public byte[] addPadding(byte[] input)
+    public byte[] removePadding(byte[] input)
+
+</pre>
+	<p>
+		The
+		<code>RSAKey</code>
+		class implements core RSA functions, namely encrypting/decryption as
+		well as signing/verification. Note that the
+		<code>RSAKey</code>
+		class is used for both public and private keys, even though some
+		key/method combinations are unlikely to be used in practice. For
+		example, it is unlikely that the
+		<code>sign()</code>
+		method of a public
+		<code>RSAKey</code>
+		would ever be used.</p>
+	
+	<p>
+		The
+		<code>encrypt()</code>
+		method should encrypt the plaintext using optimal asymmetric
+		encryption padding (OAEP) as discussed in class. It is not enough to
+		simply exponentiate and mod the plaintext.
+		<code>encrypt()</code>
+		,
+		<code>sign()</code>
+		, and
+		<code> encodeOaep()</code>
+		take a PRGen parameter, in case the implementation wants to use some
+		pseudorandom bits. The
+		<code>decrypt()</code>
+		method should be able to decrypt the ciphertext. Your code for OAEP
+		encoding and decoding should be in the provided
+		
+	<code>encodeOaep()</code>
+		and
+		<code>decodeOaep()</code>
+		methods. Your other methods should call these utility methods to
+		encode/decode when necessary.</p>
+	
+	<p>
+		The
+		<code>sign()</code>
+		method should generate a signature (array of bytes) that can be
+		verified by the
+		<code>verifySignature()</code>
+		method of the other
+		<code>RSAKey</code>
+		in the private/public
+		<code>RSAKey</code>
+		pair. You should not include the entire message as part of the
+		signature; assume that the verifier will already have access to this
+		message. This assumption of access is reflected in the API for
+		<code>verifySignature()</code>
+		, which accepts the message as one of its arguments.</p>
+	
+	<p>
+		The
+		<code>verifySignature()</code>
+		method should be used by a public
+		<code>RSAKey</code>
+		object to verify a signature generated by the corresponding private
+		<code>RSAKey</code>
+		's
+		<code>sign()</code>
+		method.</p>
+	
+	<p>
+		The
+		<code>maxPlaintextLength()</code>
+		method should return the largest N such that any plaintext of size N
+		bytes can be encrypted with this key. Your code must correctly operate
+		on plaintexts that are any size less than or equal to the size
+		returned by
+		<code>maxPlaintextLength()</code>.</p>
+	
+	<p>
+		The
+		<code>addPadding()</code>
+		and
+		<code>removePadding()</code>
+		methods are used to pad the input to the OAEP algorithm if it is too
+		short. See below for more information on this.</p>
+	
+	<p>
+		<b>KeyExchange.</b> Your KeyExchange class should implement the
+		following API:</p>
+	
+	<pre>
+public class KeyExchange {
+    public static final int OutputSizeBytes
+    public static final int OutputSizeBits
+    public KeyExchange(PRGen rand)
+    public byte[] prepareOutMessage() 
+    public byte[] processInMessage(byte[] inMessage) 
+}
+</pre>
+	<p>
+		The constructor should prepare to do a key exchange.
+		<code>rand</code>
+		is a secure pseudorandom generator that can be used by the
+		implementation.</p>
+	
+	<p>
+		Once the
+		<code>KeyExchange</code>
+		object is created, two operations have to be performed to complete the key exchange:</p>
+
+	<ol>
+		<li>Call <code>prepareOutMessage</code> on this object, and send
+			the result to the other participant.
+		</li>
+		<li>Receive the result of the other participant's <code>prepareOutMessage</code>,
+			and pass it in as the argument to a call on this object's <code>processInMessage</code>.
+		</li>
+	</ol>
+	<p>For a given <code>KeyExchange</code> object,
+		<code>prepareOutMessage</code>
+		and <code>processInMessage</code>
+		could be called in either order, and <code>KeyExchange</code> should produce the same result regardless.
+	</p>
+	<p>
+		The call to
+		<code>processInMessage</code>
+		should behave as follows:</p>
+	<ul>
+		<li>If passed a <code>null</code> value, then throw a <code>NullPointerException</code>.
+		</li>
+		<li>Otherwise, if passed a value that could not possibly have
+			been generated by <code>prepareOutMessage</code>, then return <code>null</code>.
+		</li>
+		<li>Otherwise, return a "digest" value with the property
+			described below.</li>
+	</ul>
+	<p>
+		Your
+		<code>KeyExchange</code>
+		class must provide the following security guarantee: If the two
+		participants end up with the same non-null digest value, then this
+		digest value is not known to anyone else. This must be true even if
+		third parties can observe and modify the messages sent between the
+		participants.</p>
+	
+	<p>
+        The code performing the exchange is <em>not</em> required to check
+        whether the two participants end up with the same digest value; the code
+        calling these methods must verify that property.
+	</p>
+
+	<p>
+		<b>Compiling and running.</b> This assignment makes use of the classes you
+		implemented in Project 1. To avoid doubly penalizing you for any
+		mistakes you may have made in the previous assignment, we are
+		providing you with a compiled reference implementation of Project 1 in
+		<code>project1.jar</code>
+		. This assignment also makes use of Java assertions. To ensure that
+		you use
+		<code>project1.jar</code>
+		and enable assertions, please compile the code with the following
+		command:
+		<pre>javac -cp project1.jar:. [.java files]</pre>
+		and run it with:
+		<pre>java -ea -cp project1.jar:. [main class]</pre>
+	</p>
+
+	<p>
+		As before, we will be testing your code with Java 8, and so please use that
+		version when compiling and running your implementation. You can check
+		your Java version by typing
+		<code>javac -version</code>
+		and verifying that the version begins with
+		<code>1.8.0_</code>
+		. (If you only have the
+		<code>java</code>
+		command but not the
+		<code>javac</code>
+		command, you have the Java runtime, but you need to install the Java
+		Development Kit.) You can download the Java Development Kit <a
+			href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a>.
+	</p>
+
+	<p>
+		<b>Support code.</b> Public key cryptography uses integers that are
+		far larger than Java's built-in
+		<code>int</code>
+		or
+		<code>long</code>
+		types, and so neither those types nor the standard math operators like
+		<code>+</code>
+		or
+		<code>*</code>
+		will work. As a result, the most important piece of support code is Java's <a href="http://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html">BigInteger</a>
+		class, which was originally designed with RSA implementation in mind. Familiarize yourself with its functions, especially those that
+		might be particularly useful like <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html#modPow-java.math.BigInteger-java.math.BigInteger-">modPow()</a>
+		and <a href="https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html#gcd-java.math.BigInteger-">gcd()</a>.
+	</p>
+
+	<p>We are also providing you with additional utility functions in <code>Proj2Util.java</code>:</p>
+	
+<pre>
+public class Proj2Util {
+	public static final int HashSizeBits = PRF.OutputSizeBits;
+	public static final int HashSizeBytes = HashSizeBits/8;
+	
+	public static BigInteger generatePrime(PRGen rand, int numBits)
+	
+	public static byte[] hash(byte[] val)
+	public static byte[] hash(byte[] inBuf, int inOffset, int numBytes)
+	public static byte[] stretchedHash(byte[] val, int stretchToLengthBytes)
+	
+	public static BigInteger bytesToBigInteger(byte[] buf)
+	public static byte[] bigIntegerToBytes(BigInteger x, int outputSize)
+}
+</pre>
+
+	<p>
+		<code>generatePrime()</code>
+		generates a pseudorandom
+		<code>numBits</code>
+		prime number using the supplied
+		<code>PRGen</code>
+		.
+	</p>
+
+	<p>
+		The two variants of
+		<code>hash()</code>
+		implement an un-keyed hash function. Note that they are implemented
+		simply by invoking a
+		<code>PRF</code>
+		with a fixed, non-secret key.
+	</p>
+
+	<p>
+		<code>stretchedHash()</code>
+		implements a hash function that extends its output to
+		<code>stretchToLengthBytes</code>. Hint: potentially useful for digital signatures.
+	</p>
+
+	<p>
+		As converting between
+		<code>BigInteger</code>
+		s and
+		<code>byte[]</code>
+		arrays is surprisingly hard to get right, we have provided
+		<code>bigIntegerToBytes()</code>
+		and
+		<code>bytesToBigInteger()</code>.
+	</p>
+
+	<p>
+		Finally, we are providing you with constants suitable for use in the
+		Diffie-Hellman algorithm in
+		<code>DHConstants.java</code>.
+	</p>
+
+	<p><b>Assignment Tips and Tricks.</b></p>
+	<ul>
+		<li>If you find yourself writing complex functions involving <code>BigInteger</code>s
+			(e.g. manually testing primality, manually generating primes,
+			manually finding the GCD of two numbers, manually finding d given p,
+			q, and e, etc.), you're doing way more work than you need to.
+		</li>
+		<li>Start with <code>RSAKeyPair</code>. While it is true that it
+			contains instances of <code>RSAKey</code>, <code>RSAKeyPair</code>
+			does not use any of the methods that you'll be implementing in <code>RSAKey</code>.
+		</li>
+		<li>An <code>RSAKey</code> object does not know if it is "private" or
+			"public". Indeed, it is even possible to sign messages using a public
+			key or encrypt using a private key, though neither of these strange
+			operations are likely to be useful in practice.</li>
+		<li>For full credit, don't forget to pad the input to the OAEP
+			algorithm if it is too short &mdash; this is needed to guarantee security
+			(otherwise the exponentiated message might be smaller than the
+			modulus). This can be done using a padding scheme similar to that
+			diagrammed above. <b>The penalty for not padding will be very small.</b> If you're going to implement padding, we recommend that
+			first you get your code working for the case where all inputs are
+			full-sized and then modify your code so that it handles padding. If you
+			implement padding, the relevant code should be in the provided <code>addPadding()</code>
+			and <code>removePadding()</code> methods. Your other methods should
+			call these utility methods to pad/unpad when necessary.
+		<li>As in Project 1, the spec is deliberately vague regarding how
+			you should accomplish each task. There is a significant design
+			component to each problem.</li>
+		<li>There is a bit more programming this week. Our reference
+			solutions are 45, 189, and 86 lines of code (including everything,
+			even comments, whitespace, brackets, etc.) for <code>RSAKeyPair</code>,
+			<code>RSAKey</code>, and <code>KeyExchange</code> respectively.
+		</li>
+		<li>For maximum elegance in <code>RSAKey</code>, your message should only be
+			in <code>BigInteger</code> format for the purposes of exponentiation
+			and modular reduction. In other words, when you're encoding or
+			decoding OAEP and adding or removing padding, it's much easier to
+			deal with your input in terms of <code>byte[]</code>.
+		</li>
+	</ul>
+
+	<p>
+		<b>A few words about grading.</b> As before, some of your grade will be based on
+		whether your code passes certain automated tests. But, as stated
+		previously, the security of your implementation ultimately depends on
+		its design and cannot be verified by testing alone. An implementation
+		that compiles, runs, and appears to work may in fact be insecure. As a
+		result, manual inspection of your design will determine a large part
+		of your grade.</p>
+	<p>
+			<small>Adapted from an assignment copyright 1998&ndash;2014, <a href="https://www.cs.princeton.edu/~felten">Edward W. Felten</a>. Used with permission.</small>
+		</p>
+</div>
+{% endblock %}

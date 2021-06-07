@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %} - Phoenixforge{% endblock %}
+{% block phoenixforge_class %} class="active"{% endblock %}
+
+{% block content %}
+<div class="container">
+		<h1>Using Phoenixforge</h1>
+		
+		<p>This course uses Phoenixforge to collect homeworks, projects, and
+		paper responses and to distribute the support code you will need to
+		do the projects.</p>
+
+		<p>Phoenixforge is based on the <a href="http://subversion.apache.org">Subversion</a>
+		version control system (SVN). There are SVN tutorials online, including
+		<a href="http://www.clear.rice.edu/comp314/svn.html">here</a>, and 
+		<a href="http://www.ling.ohio-state.edu/~scott/talks/svntutorial/lcc_subversion_tutorial.pdf">here</a>
+		and <a href="http://code.google.com/p/westmont-risk/wiki/SvnTutorial">here</a>.
+		You can search for <a href="http://www.google.com/search?q=svn+tutorial">svn tutorial</a>
+		and <a href="http://www.google.com/search?q=svn+tutorial">svn introduction</a> to find others.
+		The canonical reference is <a href="http://svnbook.red-bean.com">the SVN book here</a>, which
+		includes <a href="http://svnbook.red-bean.com/en/1.7/index.html">HTML</a> and 
+		<a href="http://svnbook.red-bean.com/en/1.7/svn-book.pdf">PDF</a> versions; you might want to review 
+		<a href="http://svnbook.red-bean.com/en/1.7/svn.basic.html">Chapter 1</a>.</p>
+		
+		<h2>Instructions</h2>
+		
+		<ul class="instructions">
+			<li>As a student in the class, you should have your own Phoenixforge SVN repository visible at: 
+			<code>https://phoenixforge.cs.uchicago.edu/projects/[insert your CNetID here]-cs232-{{ course.term }}-{{ course.shortYear() }}</code>.
+			Make sure this URL is accessible. If it's not, contact a member of
+			the course staff.</li>
+
+			<li>To get started, you will need to create a parent directory and
+			then check out your repository. Create the parent directory with the following
+			commands:
+<pre>
+mkdir cs232
+chmod 700 cs232
+cd cs232
+</pre>
+			The <code>chmod 700</code> command ensures that only you have permission to access to your work.
+			(You are responsible for taking steps to prevent others from copying your work.) Then, check out the code:
+<pre>
+svn checkout https://phoenixforge.cs.uchicago.edu/svn/[insert your CNetID here]-cs232-{{ course.term }}-{{ course.shortYear() }}
+</pre>
+			You may be prompted to accept the TLS certificate for the Phoenixforge
+			server. If you're paranoid (as you should be in this course!), check that the
+			certificate fingerprint is equal to
+			<code>86:46:AD:D0:C2:42:A0:BC:AD:0B:68:DB:0C:29:4D:DD:97:A2:46:F9</code>.
+			If it is, then enter 'p' to permanently accept it. If it's not, let the course staff know!
+			(You will learn what this all means in this class soon enough!) You will then be prompted for your CNet password.</li>
+
+			<li>As each assignment is handed out, the course staff will create a
+			directory in your SVN repository (e.g., <code>hw1</code> for Homework 1)
+			containing the files you will need to get started. These might include homework
+			submission templates or support code. To fetch the latest assignment directories and files, use the
+			<code>svn update</code> command.</li>
+			
+			<li>When working on an assignment, modify the files in its directory.
+			To add a new file named X for the first time, type <code>svn add X</code></li>
+			
+			<li>When you have a set of modifications and added files that you
+			would like to save and upload to Phoenixforge, type <code>svn
+			commit</code>. You will be prompted to write a short "commit message"
+			describing this set of changes (e.g., <code>"Implement function foo()"</code>).
+			You can run <code>svn commit</code> as many times as you like.</li>
+			
+			<li><b>We will assume that the last revision you commit before the
+			due date (assuming you're not using any late days) is the one you are
+			turning in.</b> When you're finished with the assignment, make sure that all your work has
+			been committed by typing <code>svn status</code>. This command lists
+			files that have uncommitted modifications (marked with an <code>M</code>), as
+			well as files that have not been added or committed (marked with a
+			<code>?</code>). Run <code>svn add</code> and <code>svn commit</code> as needed
+			to ensure that all your work has been committed.</li>
+			
+			<li>As an added check that the files you think have been handed in
+			really have been handed in, examine the contents of your repository
+			on the Web at: <code>https://phoenixforge.cs.uchicago.edu/projects/[insert your CNetID here]-cs232-{{ course.term }}-{{ course.shortYear() }}/repository</code>.
+			To help you, each assignment directory in your repository contains a
+			file named <code>00-checkme.html</code> that contains a link to a Web
+			page that shows the contents of that directory in your repository.
+			Use this to confirm what the graders will see when they collect your
+			files and to make sure that you have not submitted an empty (0 byte)
+			file by accident.
+		</li>
+	</ul>
+</div>
+{% endblock %}
